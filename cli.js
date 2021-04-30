@@ -40,15 +40,12 @@ function countOption(optarg, previous) {
 
 /** Entry point for this command.
  *
- * @param {Array<string>} args Command-line arguments.
+ * @param {!Array<string>} args Command-line arguments.
  * @param {!CommandOptions} options Options.
- * @param {function(number)} callback Callback with exit code.
+ * @returns {!Promise<number>} Promise for exit code.  Only rejected for
+ * arguments with invalid type (or args.length < 2).
  */
-function modulenameMain(args, options, callback) {
-  if (typeof callback !== 'function') {
-    throw new TypeError('callback must be a function');
-  }
-
+async function modulenameMain(args, options) {
   if (!Array.isArray(args) || args.length < 2) {
     throw new TypeError('args must be an Array with at least 2 items');
   }
@@ -88,10 +85,8 @@ function modulenameMain(args, options, callback) {
   try {
     command.parse(args);
   } catch (errParse) {
-    const exitCode =
-      errParse.exitCode !== undefined ? errParse.exitCode : 1;
-    process.nextTick(callback, exitCode);
-    return;
+    // Note: Error message already printed to stderr by Commander
+    return errParse.exitCode !== undefined ? errParse.exitCode : 1;
   }
 
   const argOpts = command.opts();
@@ -99,17 +94,13 @@ function modulenameMain(args, options, callback) {
     files: command.args,
     verbosity: (argOpts.verbose || 0) - (argOpts.quiet || 0),
   };
-  // eslint-disable-next-line promise/catch-or-return
-  modulename(cmdOpts)
-    .then(
-      () => 0,
-      (err) => {
-        options.stderr.write(`${err}\n`);
-        return 1;
-      },
-    )
-    // Note: nextTick for unhandledException (like util.callbackify)
-    .then((exitCode) => process.nextTick(callback, exitCode));
+  try {
+    await modulename(cmdOpts);
+    return 0;
+  } catch (err) {
+    options.stderr.write(`${err}\n`);
+    return 1;
+  }
 }
 
 module.exports = modulenameMain;

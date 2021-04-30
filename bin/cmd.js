@@ -10,6 +10,7 @@ const main = require('../cli.js');
 
 // This file was invoked directly.
 // Note:  Could pass process.exit as callback to force immediate exit.
-main(process.argv, process, (exitCode) => {
+// eslint-disable-next-line promise/catch-or-return
+main(process.argv, process).then((exitCode) => {
   process.exitCode = exitCode;
 });
