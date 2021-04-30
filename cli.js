@@ -6,9 +6,20 @@
 
 'use strict';
 
-const Yargs = require('yargs/yargs');
+const { Command } = require('commander');
 const packageJson = require('./package.json');
 const modulename = require('.');
+
+/** Option parser to count the number of occurrences of the option.
+ *
+ * @private
+ * @param {boolean|string} optarg Argument passed to option (ignored).
+ * @param {number=} previous Previous value of option (counter).
+ * @returns {number} previous + 1.
+ */
+function countOption(optarg, previous) {
+  return (previous || 0) + 1;
+}
 
 /** Options for command entry points.
  *
@@ -65,73 +76,49 @@ function modulenameMain(args, options, callback) {
     args = [];
   }
 
-  const yargs = new Yargs()
-    .parserConfiguration({
-      'parse-numbers': false,
-      'parse-positional-numbers': false,
-      'dot-notation': false,
-      'duplicate-arguments-array': false,
-      'flatten-duplicate-arrays': false,
-      'greedy-arrays': false,
-      'strip-aliased': true,
-      'strip-dashed': true,
+  const command = new Command()
+    .exitOverride()
+    .configureOutput({
+      writeOut: (str) => options.stdout.write(str),
+      writeErr: (str) => options.stderr.write(str),
+      getOutHelpWidth: () => options.stdout.columns,
+      getErrHelpWidth: () => options.stderr.columns,
     })
-    .usage('Usage: $0 [options] [args...]')
-    .help()
-    .alias('help', 'h')
-    .alias('help', '?')
-    .option('quiet', {
-      alias: 'q',
-      describe: 'Print less output',
-      count: true,
-    })
-    .option('verbose', {
-      alias: 'v',
-      describe: 'Print more output',
-      count: true,
-    })
-    .version(`${packageJson.name} ${packageJson.version}`)
-    .alias('version', 'V')
-    .strict();
-  yargs.parse(args, (errYargs, argOpts, output) => {
-    if (errYargs) {
-      options.stderr.write(`${output || errYargs}\n`);
-      callback(1);
-      return;
-    }
+    .arguments('[file...]')
+    .allowExcessArguments(false)
+    // Check for required/excess arguments.
+    // Workaround https://github.com/tj/commander.js/issues/1493
+    .action(() => {})
+    .description('Command description.')
+    .option('-q, --quiet', 'Print less output', countOption)
+    .option('-v, --verbose', 'Print more output', countOption)
+    .version(packageJson.version);
 
-    if (output) {
-      options.stdout.write(`${output}\n`);
-    }
+  try {
+    command.parse(args);
+  } catch (errParse) {
+    const exitCode =
+      errParse.exitCode !== undefined ? errParse.exitCode : 1;
+    process.nextTick(callback, exitCode);
+    return;
+  }
 
-    if (argOpts.help || argOpts.version) {
-      callback(0);
-      return;
-    }
-
-    if (argOpts._.length !== 1) {
-      options.stderr.write('Error: Exactly one argument is required.\n');
-      callback(1);
-      return;
-    }
-
-    // Parse arguments then call API function with parsed options
-    const cmdOpts = {
-      files: argOpts._,
-      verbosity: argOpts.verbose - argOpts.quiet,
-    };
-    // eslint-disable-next-line promise/catch-or-return
-    modulename(cmdOpts)
-      .then(
-        () => 0,
-        (err) => {
-          options.stderr.write(`${err}\n`);
-          return 1;
-        },
-      )
-      // Note: nextTick for unhandledException (like util.callbackify)
-      .then((exitCode) => process.nextTick(callback, exitCode));
-  });
+  const argOpts = command.opts();
+  const cmdOpts = {
+    files: command.args,
+    verbosity: (argOpts.verbose || 0) - (argOpts.quiet || 0),
+  };
+  // eslint-disable-next-line promise/catch-or-return
+  modulename(cmdOpts)
+    .then(
+      () => 0,
+      (err) => {
+        options.stderr.write(`${err}\n`);
+        return 1;
+      },
+    )
+    // Note: nextTick for unhandledException (like util.callbackify)
+    .then((exitCode) => process.nextTick(callback, exitCode));
 }
 
 module.exports = modulenameMain;
