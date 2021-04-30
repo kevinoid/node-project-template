@@ -33,7 +33,7 @@ const modulename = require('.');
  * @param {!CommandOptions} options Options.
  * @param {function(number)} callback Callback with exit code.
  */
-function modulenameCmd(args, options, callback) {
+function modulenameMain(args, options, callback) {
   if (typeof callback !== 'function') {
     throw new TypeError('callback must be a function');
   }
@@ -134,4 +134,4 @@ function modulenameCmd(args, options, callback) {
   });
 }
 
-module.exports = modulenameCmd;
+module.exports = modulenameMain;
