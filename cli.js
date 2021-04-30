@@ -49,10 +49,8 @@ function modulenameMain(args, options, callback) {
     throw new TypeError('callback must be a function');
   }
 
-  if (args !== undefined
-      && args !== null
-      && Math.floor(args.length) !== args.length) {
-    throw new TypeError('args must be Array-like');
+  if (!Array.isArray(args) || args.length < 2) {
+    throw new TypeError('args must be an Array with at least 2 items');
   }
 
   if (!options || typeof options !== 'object') {
@@ -67,13 +65,6 @@ function modulenameMain(args, options, callback) {
   }
   if (!options.stderr || typeof options.stderr.write !== 'function') {
     throw new TypeError('options.stderr must be a stream.Writable');
-  }
-
-  if (args.length >= 2) {
-    // Strip "node" and script name, ensure args are strings
-    args = Array.prototype.slice.call(args, 2).map(String);
-  } else {
-    args = [];
   }
 
   const command = new Command()
