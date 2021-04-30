@@ -137,4 +137,58 @@ Options:
       assert.strictEqual(options.stderr.read(), null);
     });
   }
+
+  it('writes error to stderr and exit 1 on rejection', async () => {
+    const options = getTestOptions();
+    const err = new Error('test');
+    options[modulenameMockSymbol] = () => Promise.reject(err);
+    const code = await main(sharedArgs, options);
+    assert.strictEqual(code, 1);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(options.stderr.read(), `${err}\n`);
+  });
+
+  it('writes error to stderr and exit 1 on throw', async () => {
+    const options = getTestOptions();
+    const err = new Error('test');
+    options[modulenameMockSymbol] = () => { throw err; };
+    const code = await main(sharedArgs, options);
+    assert.strictEqual(code, 1);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(options.stderr.read(), `${err}\n`);
+  });
+
+  it('passes non-option arguments as options.files', async () => {
+    const args = ['arg1', 'arg2'];
+    const options = getTestOptions();
+    options[modulenameMockSymbol] = (opts) => {
+      assert.deepStrictEqual(opts.files, args);
+    };
+    const code = await main([...sharedArgs, ...args], options);
+    assert.strictEqual(code, 0);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(options.stderr.read(), null);
+  });
+
+  it('verbosity: -1 for --quiet', async () => {
+    const options = getTestOptions();
+    options[modulenameMockSymbol] = (opts) => {
+      assert.strictEqual(opts.verbosity, -1);
+    };
+    const code = await main([...sharedArgs, '--quiet'], options);
+    assert.strictEqual(code, 0);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(options.stderr.read(), null);
+  });
+
+  it('verbosity: 1 for --verbose', async () => {
+    const options = getTestOptions();
+    options[modulenameMockSymbol] = (opts) => {
+      assert.strictEqual(opts.verbosity, 1);
+    };
+    const code = await main([...sharedArgs, '--verbose'], options);
+    assert.strictEqual(code, 0);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(options.stderr.read(), null);
+  });
 });
