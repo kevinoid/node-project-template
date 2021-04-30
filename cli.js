@@ -134,5 +134,4 @@ function modulenameCmd(args, options, callback) {
   });
 }
 
-modulenameCmd.default = modulenameCmd;
 module.exports = modulenameCmd;
