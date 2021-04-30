@@ -9,6 +9,7 @@
 const { Command } = require('commander');
 const packageJson = require('./package.json');
 const modulename = require('.');
+const { modulenameMockSymbol } = require('./lib/symbols.js');
 
 /** Option parser to count the number of occurrences of the option.
  *
@@ -94,8 +95,9 @@ async function modulenameMain(args, options) {
     files: command.args,
     verbosity: (argOpts.verbose || 0) - (argOpts.quiet || 0),
   };
+  const modulenameOrMock = options[modulenameMockSymbol] || modulename;
   try {
-    await modulename(cmdOpts);
+    await modulenameOrMock(cmdOpts);
     return 0;
   } catch (err) {
     options.stderr.write(`${err}\n`);

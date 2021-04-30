@@ -10,11 +10,17 @@ const { PassThrough } = require('stream');
 
 const main = require('../cli.js');
 const packageJson = require('../package.json');
+const { modulenameMockSymbol } = require('../lib/symbols.js');
 
 const sharedArgs = ['node', 'modulename'];
 
+function neverCalled() {
+  assert.fail('Should not be called');
+}
+
 function getTestOptions() {
   return {
+    [modulenameMockSymbol]: neverCalled,
     stdin: new PassThrough(),
     stdout: new PassThrough({ encoding: 'utf8' }),
     stderr: new PassThrough({ encoding: 'utf8' }),
