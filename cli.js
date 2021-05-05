@@ -4,16 +4,14 @@
  * @module modulename/cli.js
  */
 
-'use strict';
+import { Command } from 'commander';
+// TODO [engine:node@>=14]: Use readFile from 'fs/promises'
+import { promises as fsPromises } from 'fs';
 
-const { Command } = require('commander');
-// https://github.com/mysticatea/eslint-plugin-node/issues/174
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-const { readFile } = require('fs').promises;
-const path = require('path');
+import modulename from './index.js';
+import { modulenameMockSymbol } from './lib/symbols.js';
 
-const modulename = require('.');
-const { modulenameMockSymbol } = require('./lib/symbols.js');
+const { readFile } = fsPromises;
 
 /** Option parser to count the number of occurrences of the option.
  *
@@ -55,7 +53,7 @@ async function readJson(pathOrUrl, options) {
  * @returns {!Promise<number>} Promise for exit code.  Only rejected for
  * arguments with invalid type (or args.length < 2).
  */
-async function modulenameMain(args, options) {
+export default async function modulenameMain(args, options) {
   if (!Array.isArray(args) || args.length < 2) {
     throw new TypeError('args must be an Array with at least 2 items');
   }
@@ -105,7 +103,7 @@ async function modulenameMain(args, options) {
 
   if (argOpts.version) {
     const packageJson =
-      await readJson(path.join(__dirname, 'package.json'));
+      await readJson(new URL('package.json', import.meta.url));
     options.stdout.write(`${packageJson.version}\n`);
     return 0;
   }
@@ -123,5 +121,3 @@ async function modulenameMain(args, options) {
     return 1;
   }
 }
-
-module.exports = modulenameMain;

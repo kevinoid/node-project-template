@@ -11,6 +11,9 @@
     // Braces around body of it() function is more consistent/readable
     "arrow-body-style": "off",
 
+    // Tests are not expected to have exports
+    "import/no-unused-modules": "off",
+
     // Allow null use in tests
     "unicorn/no-null": "off"
   }

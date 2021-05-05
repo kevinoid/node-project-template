@@ -3,20 +3,18 @@
  * @license MIT
  */
 
-'use strict';
+import assert from 'assert';
+// TODO [engine:node@>=14]: Use readFile from 'fs/promises'
+import { promises as fsPromises } from 'fs';
+import { PassThrough } from 'stream';
 
-const assert = require('assert');
-// https://github.com/mysticatea/eslint-plugin-node/issues/174
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-const { readFile } = require('fs').promises;
-const path = require('path');
-const { PassThrough } = require('stream');
+import main from '../cli.js';
+import { modulenameMockSymbol } from '../lib/symbols.js';
 
-const main = require('../cli.js');
-const { modulenameMockSymbol } = require('../lib/symbols.js');
+const { readFile } = fsPromises;
 
 const packageJsonPromise =
-  readFile(path.join(__dirname, '..', 'package.json'), { encoding: 'utf8' })
+  readFile(new URL('../package.json', import.meta.url), { encoding: 'utf8' })
     .then(JSON.parse);
 
 const sharedArgs = ['node', 'modulename'];

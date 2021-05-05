@@ -3,9 +3,7 @@
  * @license MIT
  */
 
-'use strict';
-
-const modulename = require('..');
+import modulename from '../index.js';
 
 describe('modulename', () => {
   it('does something', (done) => {

@@ -23,6 +23,9 @@
         "bin/*.js"
       ],
       "rules": {
+        // Executable scripts are not expected to have exports
+        "import/no-unused-modules": "off",
+
         // Executable scripts should have a shebang
         "node/shebang": "off"
       }

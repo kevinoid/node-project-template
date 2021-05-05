@@ -4,9 +4,7 @@
  * @license MIT
  */
 
-'use strict';
-
-const main = require('../cli.js');
+import main from '../cli.js';
 
 // This file was invoked directly.
 // Note:  Could pass process.exit as callback to force immediate exit.
