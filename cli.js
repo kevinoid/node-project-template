@@ -7,7 +7,11 @@
 'use strict';
 
 const { Command } = require('commander');
-const packageJson = require('./package.json');
+// https://github.com/mysticatea/eslint-plugin-node/issues/174
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+const { readFile } = require('fs').promises;
+const path = require('path');
+
 const modulename = require('.');
 const { modulenameMockSymbol } = require('./lib/symbols.js');
 
@@ -20,6 +24,11 @@ const { modulenameMockSymbol } = require('./lib/symbols.js');
  */
 function countOption(optarg, previous) {
   return (previous || 0) + 1;
+}
+
+async function readJson(pathOrUrl, options) {
+  const content = await readFile(pathOrUrl, { encoding: 'utf8', ...options });
+  return JSON.parse(content);
 }
 
 /** Options for command entry points.
@@ -81,7 +90,9 @@ async function modulenameMain(args, options) {
     .description('Command description.')
     .option('-q, --quiet', 'Print less output', countOption)
     .option('-v, --verbose', 'Print more output', countOption)
-    .version(packageJson.version);
+    // TODO: Replace with .version(packageJson.version) loaded as JSON module
+    // https://github.com/nodejs/node/issues/37141
+    .option('-V, --version', 'output the version number');
 
   try {
     command.parse(args);
@@ -91,6 +102,14 @@ async function modulenameMain(args, options) {
   }
 
   const argOpts = command.opts();
+
+  if (argOpts.version) {
+    const packageJson =
+      await readJson(path.join(__dirname, 'package.json'));
+    options.stdout.write(`${packageJson.version}\n`);
+    return 0;
+  }
+
   const cmdOpts = {
     files: command.args,
     verbosity: (argOpts.verbose || 0) - (argOpts.quiet || 0),

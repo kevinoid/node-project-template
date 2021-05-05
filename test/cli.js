@@ -6,11 +6,18 @@
 'use strict';
 
 const assert = require('assert');
+// https://github.com/mysticatea/eslint-plugin-node/issues/174
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+const { readFile } = require('fs').promises;
+const path = require('path');
 const { PassThrough } = require('stream');
 
 const main = require('../cli.js');
-const packageJson = require('../package.json');
 const { modulenameMockSymbol } = require('../lib/symbols.js');
+
+const packageJsonPromise =
+  readFile(path.join(__dirname, '..', 'package.json'), { encoding: 'utf8' })
+    .then(JSON.parse);
 
 const sharedArgs = ['node', 'modulename'];
 
@@ -127,6 +134,7 @@ Options:
 
   for (const verOption of ['-V', '--version']) {
     it(`writes version to stdout then exit 0 for ${verOption}`, async () => {
+      const packageJson = await packageJsonPromise;
       const options = getTestOptions();
       const code = await main([...sharedArgs, verOption], options);
       assert.strictEqual(code, 0);
