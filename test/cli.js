@@ -4,7 +4,7 @@
  */
 
 import assert from 'assert';
-// TODO [engine:node@>=14]: Use readFile from 'fs/promises'
+// TODO [engine:node@>=14]: import { readFile } from 'fs/promises'
 import { promises as fsPromises } from 'fs';
 import { PassThrough } from 'stream';
 
