@@ -100,12 +100,12 @@ describe('modulename/cli.js', () => {
   it('writes error and exit 1 for unexpected option', async () => {
     const options = getTestOptions();
     const code = await main([...sharedArgs, '--unexpected'], options);
-    assert.strictEqual(code, 1);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(
       options.stderr.read(),
       "error: unknown option '--unexpected'\n",
     );
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 1);
   });
 
   for (const helpOption of ['-h', '--help']) {
@@ -135,12 +135,12 @@ Options:
       const packageJson = await packageJsonPromise;
       const options = getTestOptions();
       const code = await main([...sharedArgs, verOption], options);
-      assert.strictEqual(code, 0);
+      assert.strictEqual(options.stderr.read(), null);
       assert.strictEqual(
         options.stdout.read(),
         `${packageJson.version}\n`,
       );
-      assert.strictEqual(options.stderr.read(), null);
+      assert.strictEqual(code, 0);
     });
   }
 
@@ -149,9 +149,9 @@ Options:
     const err = new Error('test');
     options[modulenameMockSymbol] = () => Promise.reject(err);
     const code = await main(sharedArgs, options);
-    assert.strictEqual(code, 1);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(options.stderr.read(), `${err}\n`);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 1);
   });
 
   it('writes error to stderr and exit 1 on throw', async () => {
@@ -159,9 +159,9 @@ Options:
     const err = new Error('test');
     options[modulenameMockSymbol] = () => { throw err; };
     const code = await main(sharedArgs, options);
-    assert.strictEqual(code, 1);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(options.stderr.read(), `${err}\n`);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 1);
   });
 
   it('passes non-option arguments as options.files', async () => {
@@ -171,9 +171,9 @@ Options:
       assert.deepStrictEqual(opts.files, args);
     };
     const code = await main([...sharedArgs, ...args], options);
-    assert.strictEqual(code, 0);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(options.stderr.read(), null);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 0);
   });
 
   it('verbosity: -1 for --quiet', async () => {
@@ -182,9 +182,9 @@ Options:
       assert.strictEqual(opts.verbosity, -1);
     };
     const code = await main([...sharedArgs, '--quiet'], options);
-    assert.strictEqual(code, 0);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(options.stderr.read(), null);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 0);
   });
 
   it('verbosity: 1 for --verbose', async () => {
@@ -193,8 +193,8 @@ Options:
       assert.strictEqual(opts.verbosity, 1);
     };
     const code = await main([...sharedArgs, '--verbose'], options);
-    assert.strictEqual(code, 0);
-    assert.strictEqual(options.stdout.read(), null);
     assert.strictEqual(options.stderr.read(), null);
+    assert.strictEqual(options.stdout.read(), null);
+    assert.strictEqual(code, 0);
   });
 });
