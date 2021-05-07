@@ -6,9 +6,8 @@
 import modulename from '../index.js';
 
 describe('modulename', () => {
-  it('does something', (done) => {
+  it('does something', async () => {
     // Assert something about modulename here
-    modulename();
-    done();
+    await modulename();
   });
 });
