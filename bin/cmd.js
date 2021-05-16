@@ -9,7 +9,8 @@
 
 'use strict';
 
-const Yargs = require('yargs/yargs');
+const yargs = require('yargs/yargs');
+
 const packageJson = require('../package.json');
 const modulename = require('..');
 
@@ -68,7 +69,7 @@ function modulenameCmd(args, options, callback) {
     args = [];
   }
 
-  const yargs = new Yargs()
+  const yargsObj = yargs(args)
     .parserConfiguration({
       'parse-numbers': false,
       'parse-positional-numbers': false,
@@ -96,7 +97,7 @@ function modulenameCmd(args, options, callback) {
     .version(`${packageJson.name} ${packageJson.version}`)
     .alias('version', 'V')
     .strict();
-  yargs.parse(args, (errYargs, argOpts, output) => {
+  yargsObj.parse(args, (errYargs, argOpts, output) => {
     if (errYargs) {
       options.stderr.write(`${output || errYargs}\n`);
       callback(1);
