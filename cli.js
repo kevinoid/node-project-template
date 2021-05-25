@@ -87,8 +87,8 @@ export default async function modulenameMain(args, options) {
     // TODO [commander@>=8]: Remove if fixed
     .action(() => {})
     .description('Command description.')
-    .option('-q, --quiet', 'Print less output', countOption)
-    .option('-v, --verbose', 'Print more output', countOption)
+    .option('-q, --quiet', 'print less output', countOption)
+    .option('-v, --verbose', 'print more output', countOption)
     // TODO: Replace with .version(packageJson.version) loaded as JSON module
     // https://github.com/nodejs/node/issues/37141
     .option('-V, --version', 'output the version number');

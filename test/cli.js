@@ -120,8 +120,8 @@ describe('modulename/cli.js', () => {
 Command description.
 
 Options:
-  -q, --quiet    Print less output
-  -v, --verbose  Print more output
+  -q, --quiet    print less output
+  -v, --verbose  print more output
   -V, --version  output the version number
   -h, --help     display help for command
 `,
