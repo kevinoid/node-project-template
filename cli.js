@@ -110,7 +110,14 @@ export default async function modulenameMain(args, options) {
       return 0;
     }
 
-    // Note: Error message already printed to stderr by Commander
+    // If a non-Commander error was thrown, treat it as unhandled.
+    // It probably represents a bug and has not been written to stdout/stderr.
+    // throw commander.{CommanderError,InvalidOptionArgumentError} to avoid.
+    if (typeof errParse.code !== 'string'
+      || !errParse.code.startsWith('commander.')) {
+      throw errParse;
+    }
+
     return errParse.exitCode !== undefined ? errParse.exitCode : 1;
   }
 
