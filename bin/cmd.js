@@ -133,8 +133,9 @@ function modulenameCmd(args, options, callback) {
           return 1;
         },
       )
-      // Note: nextTick for unhandledException (like util.callbackify)
-      .then((exitCode) => process.nextTick(callback, exitCode));
+      // Note: queueMicrotask for unhandledException (like util.callbackify)
+      // eslint-disable-next-line promise/no-callback-in-promise
+      .then((exitCode) => queueMicrotask(() => callback(exitCode)));
   });
 }
 
