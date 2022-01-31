@@ -108,7 +108,7 @@ export default async function modulenameMain(args, options) {
 
     // If a non-Commander error was thrown, treat it as unhandled.
     // It probably represents a bug and has not been written to stdout/stderr.
-    // throw commander.{CommanderError,InvalidOptionArgumentError} to avoid.
+    // throw commander.{CommanderError,InvalidArgumentError} to avoid.
     if (typeof errParse.code !== 'string'
       || !errParse.code.startsWith('commander.')) {
       throw errParse;
