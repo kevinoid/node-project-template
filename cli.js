@@ -86,8 +86,8 @@ export default async function modulenameMain(args, options) {
     .description('Command description.')
     .option('-q, --quiet', 'print less output', countOption)
     .option('-v, --verbose', 'print more output', countOption)
-    // TODO: Replace with .version(packageJson.version) loaded as JSON module
-    // https://github.com/nodejs/node/issues/37141
+    // TODO [engine:node@>=17.5]: .version(packageJson.version) from JSON import
+    // See https://github.com/nodejs/node/pull/41736
     .option('-V, --version', 'output the version number')
     // throw exception to stop option parsing early, as commander does
     // (e.g. to avoid failing due to missing required arguments)
