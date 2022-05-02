@@ -4,14 +4,11 @@
  */
 
 import assert from 'assert';
-// TODO [engine:node@>=14]: import { readFile } from 'fs/promises'
-import { promises as fsPromises } from 'fs';
+import { readFile } from 'fs/promises';
 import { PassThrough } from 'stream';
 
 import main from '../cli.js';
 import { modulenameMockSymbol } from '../lib/symbols.js';
-
-const { readFile } = fsPromises;
 
 const packageJsonPromise =
   readFile(new URL('../package.json', import.meta.url), { encoding: 'utf8' })

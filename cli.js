@@ -5,13 +5,10 @@
  */
 
 import { Command } from 'commander';
-// TODO [engine:node@>=14]: import { readFile } from 'fs/promises'
-import { promises as fsPromises } from 'fs';
+import { readFile } from 'fs/promises';
 
 import modulename from './index.js';
 import { modulenameMockSymbol } from './lib/symbols.js';
-
-const { readFile } = fsPromises;
 
 /** Option parser to count the number of occurrences of the option.
  *
