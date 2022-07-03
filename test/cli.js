@@ -3,16 +3,17 @@
  * @license MIT
  */
 
-import assert from 'assert';
-import { readFile } from 'fs/promises';
-import { PassThrough } from 'stream';
+import assert from 'node:assert';
+import { readFile } from 'node:fs/promises';
+import { PassThrough } from 'node:stream';
 
 import main from '../cli.js';
 import { modulenameMockSymbol } from '../lib/symbols.js';
 
-const packageJsonPromise =
-  readFile(new URL('../package.json', import.meta.url), { encoding: 'utf8' })
-    .then(JSON.parse);
+const packageJsonPromise = JSON.parse(await readFile(
+  new URL('../package.json', import.meta.url),
+  { encoding: 'utf8' },
+));
 
 const sharedArgs = ['node', 'modulename'];
 

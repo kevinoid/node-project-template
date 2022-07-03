@@ -5,7 +5,7 @@
  */
 
 import { Command } from 'commander';
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 
 import modulename from './index.js';
 import { modulenameMockSymbol } from './lib/symbols.js';

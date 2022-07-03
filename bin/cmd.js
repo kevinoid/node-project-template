@@ -6,9 +6,4 @@
 
 import main from '../cli.js';
 
-// This file was invoked directly.
-// Note:  Could pass process.exit as callback to force immediate exit.
-// eslint-disable-next-line promise/catch-or-return
-main(process.argv, process).then((exitCode) => {
-  process.exitCode = exitCode;
-});
+process.exitCode = await main(process.argv, process);
