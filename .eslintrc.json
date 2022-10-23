@@ -27,7 +27,7 @@
         "import/no-unused-modules": "off",
 
         // Executable scripts should have a shebang
-        "node/shebang": "off"
+        "n/shebang": "off"
       }
     }
   ]
