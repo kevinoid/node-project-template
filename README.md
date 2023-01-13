@@ -2,7 +2,7 @@ Project Template
 ================
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/kevinoid/node-project-template/node.js.yml?branch=main&style=flat&label=build)](https://github.com/kevinoid/node-project-template/actions?query=branch%3Amain)
-[![Coverage](https://img.shields.io/codecov/c/github/kevinoid/project-template.svg?style=flat)](https://codecov.io/github/kevinoid/project-template?branch=main)
+[![Coverage](https://img.shields.io/codecov/c/github/kevinoid/node-project-template/main.svg?style=flat)](https://app.codecov.io/gh/kevinoid/node-project-template/branch/main)
 [![Dependency Status](https://img.shields.io/david/kevinoid/project-template.svg?style=flat)](https://david-dm.org/kevinoid/project-template)
 [![Supported Node Version](https://img.shields.io/node/v/@kevinoid/project-template.svg?style=flat)](https://www.npmjs.com/package/@kevinoid/project-template)
 [![Version on NPM](https://img.shields.io/npm/v/@kevinoid/project-template.svg?style=flat)](https://www.npmjs.com/package/@kevinoid/project-template)
