@@ -13,6 +13,9 @@
     "import/no-unused-modules": "off",
 
     // Allow null use in tests
-    "unicorn/no-null": "off"
+    "unicorn/no-null": "off",
+
+    // Allow EventEmitter use in tests
+    "unicorn/prefer-event-target": "off"
   }
 }
