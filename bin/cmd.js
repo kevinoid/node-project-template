@@ -11,8 +11,8 @@
 
 const yargs = require('yargs/yargs');
 
-const packageJson = require('../package.json');
 const modulename = require('..');
+const packageJson = require('../package.json');
 
 /** Options for command entry points.
  *
