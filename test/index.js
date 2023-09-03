@@ -5,6 +5,8 @@
 
 'use strict';
 
+// https://github.com/import-js/eslint-plugin-import/issues/2844
+// eslint-disable-next-line import/extensions
 const modulename = require('..');
 
 describe('modulename', () => {

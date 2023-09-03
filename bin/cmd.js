@@ -11,6 +11,8 @@
 
 const yargs = require('yargs/yargs');
 
+// https://github.com/import-js/eslint-plugin-import/issues/2844
+// eslint-disable-next-line import/extensions
 const modulename = require('..');
 const packageJson = require('../package.json');
 
