@@ -4,8 +4,9 @@
  * @module modulename/cli.js
  */
 
-import { Command } from 'commander';
 import { readFile } from 'node:fs/promises';
+
+import { Command } from 'commander';
 
 import modulename from './index.js';
 import { modulenameMockSymbol } from './lib/symbols.js';
