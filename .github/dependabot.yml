@@ -13,11 +13,11 @@
 # https://github.com/dependabot/dependabot-core/issues/2268#issuecomment-794745837
 version: 2
 updates:
-- package-ecosystem: "github-actions"
+- package-ecosystem: "github-actions"  # zizmor: ignore[dependabot-cooldown]
   directory: "/"
   schedule:
     interval: "daily"
-- package-ecosystem: "npm"
+- package-ecosystem: "npm"  # zizmor: ignore[dependabot-cooldown]
   directory: "/"
   schedule:
     interval: "daily"
