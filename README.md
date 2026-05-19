@@ -10,6 +10,7 @@ Project Template
 A Node.js/npm project template with [codecov](https://codecov.io/),
 [coveralls](https://coveralls.io/), [ESLint](https://eslint.org/),
 [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli),
+[trusted publishing](https://docs.npmjs.com/trusted-publishers),
 [c8](https://github.com/bcoe/c8), [JSDoc](http://usejsdoc.org/), and
 [mocha](https://mochajs.org/).
 
