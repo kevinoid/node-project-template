@@ -9,7 +9,7 @@
 
 'use strict';
 
-const yargs = require('yargs/yargs');
+const yargs = require('yargs');
 
 // https://github.com/import-js/eslint-plugin-import/issues/2844
 // eslint-disable-next-line import/extensions

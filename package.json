@@ -52,7 +52,7 @@
     "version-deps": "npm install conventional-changelog-cli david depcheck git-branch-is hub-ci-status"
   },
   "dependencies": {
-    "yargs": "^17.0.1"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@kevinoid/eslint-config": "^34.0.0",
@@ -65,7 +65,7 @@
     "rimraf": "^6.0.0"
   },
   "engines": {
-    "node": "20 || >=22",
+    "node": "^20.19.0 || >=22.12.0",
     "npm": ">=1.3.7"
   },
   "mocha": {
