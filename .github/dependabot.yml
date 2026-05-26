@@ -25,3 +25,7 @@ updates:
     interval: "daily"
   cooldown:
     default-days: 7
+  ignore:
+  # Ignore major updates to eslint, due to @kevinoid/eslint-config peerDep
+  - dependency-name: "eslint"
+    update-types: ["version-update:semver-major"]
