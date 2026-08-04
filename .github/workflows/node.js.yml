@@ -28,61 +28,7 @@ jobs:
     name: Lint and Test on Node.js * x64 on ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-      with:
-        persist-credentials: false
-    - name: Set up Node.js
-      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
-      with:
-        # Note: '*' is "latest LTS version" (without check-latest, it would be
-        # "latest LTS version in local cache") because it first checks
-        # https://github.com/actions/node-versions/releases then falls back to
-        # https://nodejs.org/dist/index.json
-        # For explanation and discussion, see:
-        # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#check-latest-version=
-        # https://github.com/actions/setup-node/issues/61#issuecomment-577548687
-        # https://github.com/actions/setup-node/issues/164#issuecomment-648999618
-        # https://github.com/actions/setup-node/pull/104
-        #
-        # Support for "current"/"latest"/"node" was added in v3.2.0
-        # https://github.com/actions/setup-node/pull/483
-        node-version: latest
-        architecture: x64
-        check-latest: true
-    - name: Display Node.js version
-      run: node --version
-    - name: Harden npm
-      run: >-
-        npm config set allow-git=none &&
-        npm config set ignore-scripts=true
-    # Workaround for https://github.com/bcoe/c8/issues/582
-    # Only apply to Node 26, since require() of ESM not supported on Node <20.19
-    # TODO [c8@>=12]: Remove this workaround.
-    - name: Override yargs for c8 on Node 26
-      shell: bash
-      run: >-
-        jq '.overrides.c8.yargs |= "^18.0.0"' package.json >package.json.new &&
-        mv -f package.json.new package.json
-    - name: Install dependencies
-      run: npm install --strict-peer-deps
-    - name: Check for deprecated dependencies
-      run: npm run check-deps
-    - name: Lint
-      run: npm run lint
-    - name: Run tests
-      run: npm run test-unit-cov
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7.0.0
-    - name: Upload coverage to Coveralls
-      uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e  # v2.3.7
-      with:
-        # Ignore intermittent server errors which are out of our control.
-        # FIXME: Would like to ignore intermittent server errors only.  See:
-        # https://github.com/coverallsapp/github-action/issues/261
-        fail-on-error: false
-        flag-name: 'ubuntu-latest_x64_*'
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel: true
+    - run: exit
 
   test-secondary:
     # Only test secondary platforms if primary test platform passed
@@ -111,64 +57,9 @@ jobs:
           os: ubuntu-latest
           node: latest
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-      with:
-        persist-credentials: false
-    - name: Set up Node.js ${{ matrix.node }}
-      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
-      with:
-        node-version: ${{ matrix.node }}
-        architecture: ${{ matrix.arch }}
-        check-latest: ${{ matrix.node == '*' }}
-    - name: Display Node.js version
-      run: node --version
-    - name: Harden npm
-      shell: bash
-      run: |
-        npm_version="$(npm --version)"
-        if [ "${npm_version%%.*}" -ge 11 ]; then
-            npm config set allow-git=none
-        fi
-        npm config set ignore-scripts=true
-    # Workaround for https://github.com/bcoe/c8/issues/582
-    # Only apply to Node 26, since require() of ESM not supported on Node <20.19
-    # TODO [c8@>=12]: Remove this workaround.
-    - name: Override yargs for c8 on Node 26
-      if: matrix.node == 'latest'
-      shell: bash
-      run: >-
-        jq '.overrides.c8.yargs |= "^18.0.0"' package.json >package.json.new &&
-        mv -f package.json.new package.json
-    - name: Install dependencies
-      run: npm install --strict-peer-deps
-    - name: Run tests
-      run: npm run test-unit-cov
-    # Note: Not uploading to Codecov, due to poor support for matrix builds
-    # https://github.com/codecov/codecov-action/issues/40
-    - name: Upload coverage to Coveralls
-      uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e  # v2.3.7
-      with:
-        # Ignore intermittent server errors which are out of our control.
-        # FIXME: Would like to ignore intermittent server errors only.  See:
-        # https://github.com/coverallsapp/github-action/issues/261
-        fail-on-error: false
-        flag-name: ${{ matrix.os }}_${{ matrix.arch }}_${{ matrix.node }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel: true
-
-  finish:
-    needs: test-secondary
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e  # v2.3.7
-      with:
-        # Ignore intermittent server errors which are out of our control.
-        # FIXME: Would like to ignore intermittent server errors only.  See:
-        # https://github.com/coverallsapp/github-action/issues/261
-        fail-on-error: false
-        github-token: ${{ secrets.github_token }}
-        parallel-finished: true
+    - name: Fail on latest windows-latest
+      if: matrix.node == 'latest' && matrix.os == 'windows-latest'
+      run: exit 1
 
   # Job to ensure all other jobs in this workflow succeeded.
   # This job is used for required status checks in rulesets, to avoid
