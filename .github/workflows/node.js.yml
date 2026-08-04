@@ -169,3 +169,21 @@ jobs:
         fail-on-error: false
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
+
+  # Job to ensure all other jobs in this workflow succeeded.
+  # This job is used for required status checks in rulesets, to avoid
+  # enumerating all (matrix) jobs and risking breakage on changes.
+  # See: https://github.com/orgs/community/discussions/26733
+  all-success:
+    # ensure this job always runs, to avoid
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#example-not-requiring-successful-dependent-jobs
+    if: always()
+    needs: [test-primary, test-secondary]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fail if any previous jobs failed
+      if: >-
+        contains(needs.*.result, 'failure')
+        || contains(needs.*.result, 'cancelled')
+        || contains(needs.*.result, 'skipped')
+      run: exit 1
