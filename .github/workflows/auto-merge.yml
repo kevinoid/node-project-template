@@ -1,0 +1,68 @@
+# GitHub Actions workflow to merge trusted pull requests
+# https://docs.github.com/en/actions/reference
+# https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/automate-dependabot-with-actions#approve-a-pull-request
+
+name: Automatically merge trusted PRs
+
+on: pull_request  # yamllint disable-line rule:truthy
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    steps:
+    - name: Check repository settings
+      run: |
+        # Save gh API options in $@ for convenience
+        set -- -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2026-03-10'
+
+        allow_auto_merge=$(gh api "$@" "repos/$GITHUB_REPOSITORY" --jq .allow_auto_merge)
+        if [ "$allow_auto_merge" != true ]; then
+          echo "::error::Allow auto-merge is not enabled in repository settings.
+        Without auto-merge, PR would be merged immediately.
+        Visit https://github.com/$GITHUB_REPOSITORY/settings to enable."
+          exit 1
+        fi
+
+        # Check for classic branch protection rule first, since single API call
+        req_checks=$(gh api "$@" "repos/$GITHUB_REPOSITORY/branches/$GITHUB_BASE_REF/protection" --jq 'has("required_status_checks")')
+        if [ "$req_checks" != true ]; then
+          # Status checks are not required by classic branch protection
+          # Check each of the active branch rulesets
+          for ruleset_url in $(gh api "$@" "repos/$GITHUB_REPOSITORY/rulesets" \
+            --jq '.[] | select(.target == "branch" and .enforcement == "active") | ._links.self.href'); do
+            # TODO: Check .conditions.ref_name include/exclude rules, being
+            # careful to handle ~ALL and ~DEFAULT_BRANCH.
+            req_checks=$(gh api "$@" "$ruleset_url" \
+              --jq 'any(.rules[]; .type == "required_status_checks")')
+            if [ "$req_checks" = true ]; then
+              break
+            fi
+          done
+        fi
+
+        if [ "$req_checks" != true ]; then
+          echo "::error::Rulesets do not require status checks to pass.
+        Without required status checks, faulty PRs may be merged.
+        Visit https://github.com/$GITHUB_REPOSITORY/settings/rules to enable."
+          exit 1
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Dependabot metadata
+      id: metadata
+      uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98  # v3.0.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Auto-merge minor Dependabot PRs
+      if: >-
+        steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+      run: gh pr merge --auto --rebase "$PR_URL"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
