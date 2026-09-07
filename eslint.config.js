@@ -15,13 +15,13 @@ export default [
   {
     rules: {
       // Allow requiring devDependencies for build and test
-      'import/no-extraneous-dependencies': ['error', {
+      'import-x/no-extraneous-dependencies': ['error', {
         devDependencies: [
           ...nodejs
             .findLast(
-              (conf) => conf.rules?.['import/no-extraneous-dependencies'],
+              (conf) => conf.rules?.['import-x/no-extraneous-dependencies'],
             )
-            .rules['import/no-extraneous-dependencies'][1].devDependencies,
+            .rules['import-x/no-extraneous-dependencies'][1].devDependencies,
           'gulpfile.js',
           'test-bin/**',
           'test-lib/**',
@@ -36,7 +36,7 @@ export default [
     basePath: 'bin',
     rules: {
       // Executable scripts are not expected to have exports
-      'import/no-unused-modules': 'off',
+      'import-x/no-unused-modules': 'off',
 
       // Executable scripts should have a shebang
       'n/hashbang': 'off',
@@ -55,7 +55,7 @@ export default [
       'arrow-body-style': 'off',
 
       // Tests are not expected to have exports
-      'import/no-unused-modules': 'off',
+      'import-x/no-unused-modules': 'off',
 
       // Allow null use in tests
       'unicorn/no-null': 'off',
