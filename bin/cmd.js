@@ -12,7 +12,7 @@
 const yargs = require('yargs');
 
 // https://github.com/import-js/eslint-plugin-import/issues/2844
-// eslint-disable-next-line import/extensions
+// eslint-disable-next-line import-x/extensions
 const modulename = require('..');
 const packageJson = require('../package.json');
 
@@ -126,18 +126,18 @@ function modulenameCmd(args, options, callback) {
       files: argOpts._,
       verbosity: argOpts.verbose - argOpts.quiet,
     };
+    /* eslint-disable unicorn/prefer-await */
     // eslint-disable-next-line promise/catch-or-return
     modulename(cmdOpts)
-      .then(
-        () => 0,
-        (err) => {
-          options.stderr.write(`${err}\n`);
-          return 1;
-        },
-      )
+      .then(() => 0)
+      .catch((err) => {
+        options.stderr.write(`${err}\n`);
+        return 1;
+      })
       // Note: queueMicrotask for unhandledException (like util.callbackify)
       // eslint-disable-next-line promise/no-callback-in-promise
       .then((exitCode) => queueMicrotask(() => callback(exitCode)));
+    /* eslint-enable unicorn/prefer-await */
   });
 }
 
