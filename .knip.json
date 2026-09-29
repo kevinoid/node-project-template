@@ -1,0 +1,16 @@
+{
+  "ignoreBinaries": [
+    // Ignore version binaries.  Install by running version-deps script.
+    "conventional-changelog",
+    "depcheck",
+    "david",
+    "git-branch-is",
+    "hub-ci-status",
+
+    // TODO: Remove supervisor from ignoreBinaries after either adding it to
+    // devDependencies or removing start script.
+    "supervisor"
+  ],
+  "treatConfigHintsAsErrors": true,
+  "treatTagHintsAsErrors": true
+}
