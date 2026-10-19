@@ -2,6 +2,8 @@
 import nodejs from '@kevinoid/eslint-config/nodejs.js';
 import globals from 'globals';
 
+// False-positive due to .findLast()
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default [
   {
     ignores: [
