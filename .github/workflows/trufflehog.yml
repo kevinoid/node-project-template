@@ -43,6 +43,7 @@ jobs:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683   # v4.2.2
       with:
         fetch-depth: ${{ steps.find_refs.outputs.depth }}
+        persist-credentials: false
     - uses: trufflesecurity/trufflehog@ea68ca03c865c5f324e86e849ced20ed3cf9dbbb   # v3.99.8
       with:
         head: ${{ steps.find_refs.outputs.head }}
